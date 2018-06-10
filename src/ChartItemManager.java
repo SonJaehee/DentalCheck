@@ -93,6 +93,9 @@ public class ChartItemManager extends JFrame {
 		addLabel("번호", 0, nGridY, 1, 1, 0, 0);
 		addText(studentNum, 1, nGridY++, 9, 1, 0, 0);
 		
+		addLabel("이름", 0, nGridY, 1, 1, 0, 0);
+		addText(name, 1, nGridY++, 9, 1, 0, 0);
+		
 		addLabel("성별", 0, nGridY, 1, 1, 0, 0);
 		addRadio(sexStr, sex, 1, nGridY++, 3, 1, 0, 0, -1);
 		
@@ -299,10 +302,10 @@ public class ChartItemManager extends JFrame {
 		JLabel lbl = new JLabel(str);
 		addGrid(lbl, gridx, gridy, 1, gridheight, weightx, weighty);
 	}
-	
+
 	public void addText(JTextField text, int gridx, int gridy,
 			int gridwidth, int gridheight, int weightx, int weighty) {
-		addGrid(text, gridx, gridy, 1, gridheight, weightx, weighty);
+		addGrid(text, gridx, gridy, gridwidth, gridheight, weightx, weighty);
 	}
 
 	public void addText(String[] str, JTextField[] text, int gridx, int gridy,
