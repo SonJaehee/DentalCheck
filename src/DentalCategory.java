@@ -1,5 +1,8 @@
+import java.io.Serializable;
 
-public class DentalCategory {
+import javax.swing.JTextField;
+
+public class DentalCategory implements Serializable {
 	private int category;	// 선택안되면 0, 없음은 1, 있음은 2, 4번째 라디오는 4
 	private int top;
 	private int bottom;
@@ -33,18 +36,34 @@ public class DentalCategory {
 		return top;
 	}
 
+	public String getTopToString() {
+		return Integer.toString(top);
+	}
+	
 	public void setTop(int top) {
 		this.top = top;
 	}
 
+	public void setTop(JTextField top) {
+		this.top = Integer.parseInt(top.getText());
+	}
+	
 	public int getBottom() {
 		return bottom;
 	}
 
+	public String getBottomToString() {
+		return Integer.toString(bottom);
+	}
+	
 	public void setBottom(int bottom) {
 		this.bottom = bottom;
 	}
 
+	public void setBottom(JTextField bottom) {
+		this.bottom = Integer.parseInt(bottom.getText());
+	}
+	
 	public String getReason() {
 		return reason;
 	}

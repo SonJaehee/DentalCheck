@@ -1,10 +1,18 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-public class ChartItemManager extends JFrame {
+public class ChartItemManager extends JFrame implements ActionListener {
+	
+	EnterChart chart;// = new EnterChart();
+	JButton saveBtn;
+	
 	private JPanel panel;
 	private GridBagLayout gbl;
 	private GridBagConstraints gbc;
@@ -62,7 +70,9 @@ public class ChartItemManager extends JFrame {
 	private JTextField comprehensiveOpinion = new JTextField(MAX_TEXTFIELD_LENGTH);		// 종합소견
 	private JTextField homeMeasures = new JTextField(MAX_TEXTFIELD_LENGTH);				// 가정에서의 조치사항
 	
-	public ChartItemManager(JScrollPane scrollPanel) {
+	//public ChartItemManager() {	}
+	
+	public ChartItemManager(JScrollPane scrollPanel, EnterChart chart) {
 		panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.setBackground(Color.WHITE);
@@ -74,12 +84,14 @@ public class ChartItemManager extends JFrame {
 		gbc.insets = new Insets(3, 1, 3, 1); // top, left, bottom, right
 	
 		panel.setLayout(gbl);
+		
+		this.chart = chart;
 	}
-	
+
 	void createItems() {
 		// 학생정보
 		int nGridY = 0; // row
-		int nGridX = 5;	// col
+		//int nGridX = 5;	// col
 		
 		addLabel("학교명", 0, nGridY, 1, 1, 0, 0);
 		addText(school, 1, nGridY++, 9, 1, 0, 0);
@@ -162,8 +174,11 @@ public class ChartItemManager extends JFrame {
 		nGridY += 2;
 
 
-		JButton saveBtn = new JButton("SAVE");
+		saveBtn = new JButton("SAVE");
 		addGrid(saveBtn, 5, nGridY, 1, 1, 0, 0);
+		
+		saveBtn.addActionListener(this);
+
 		
 	}
 	
@@ -179,123 +194,7 @@ public class ChartItemManager extends JFrame {
 		// gbl.setConstraints(c, gbc);
 		panel.add(c, gbc);
 	}
-/*
-	public void addLabel2Radio2Text(String lblStr, String radioStr1,
-			String radioStr2, String textStr1, String textStr2, int gridx, int gridy, int gridwidth, int gridheight,
-			int weightx, int weighty) {
-		JLabel lbl = new JLabel(lblStr);
-		addGrid(lbl, 0, gridy, 1, 2, weightx, weighty);
 
-		JRadioButton radioButton1 = new JRadioButton(radioStr1);
-		//radioButton1.addItemListener(new SelectItemListener());
-		addGrid(radioButton1, 1, gridy, 1, 2, weightx, weighty);
-
-		JRadioButton radioButton2 = new JRadioButton(radioStr2);
-		addGrid(radioButton2, 2, gridy, 1, 2, weightx, weighty);
-		
-		ButtonGroup bG = new ButtonGroup();
-		bG.add(radioButton1);
-		bG.add(radioButton2);
-		
-		JLabel textLbl1 = new JLabel(textStr1);
-		textLbl1.setHorizontalAlignment(0);
-		addGrid(textLbl1, 3, gridy, 1, 1, weightx, weighty);
-		JTextField textField1 = new JTextField();
-		textField1.setColumns(10);
-		addGrid(textField1, 4, gridy, 3, 1, weightx, weighty);
-
-		JLabel textLbl2 = new JLabel(textStr2);
-		textLbl2.setHorizontalAlignment(0);
-		addGrid(textLbl2, 3, gridy + 1, 1, 1, weightx, weighty);
-		JTextField textField2 = new JTextField();
-		textField2.setColumns(10);
-		addGrid(textField2, 4, gridy + 1, 3, 1, weightx, weighty);
-	}
-
-	public void addLabel2Radio1Text(String lblStr, String radioStr1,
-			String radioStr2, boolean addText, int gridx, int gridy, int gridwidth, int gridheight, int weightx,
-			int weighty) {
-		JLabel lbl = new JLabel(lblStr);
-		addGrid(lbl, 0, gridy, 1, 1, weightx, weighty);
-
-		ButtonGroup bG = new ButtonGroup();
-
-		JRadioButton radioButton1 = new JRadioButton(radioStr1);
-		bG.add(radioButton1);
-		addGrid(radioButton1, 1, gridy, 1, 1, weightx, weighty);
-
-		JRadioButton radioButton2 = new JRadioButton(radioStr2);
-		bG.add(radioButton2);
-		addGrid(radioButton2, 2, gridy, 1, 1, weightx, weighty);
-
-		if (addText) {
-			JTextField textField1 = new JTextField();
-			textField1.setColumns(10);
-			addGrid(textField1, 3, gridy, 4, 1, weightx, weighty);
-		}
-	}
-
-	public void addLabel3Radio1Text(String lblStr, String radioStr1,
-			String radioStr2, String radioStr3, Boolean addText, int gridx, int gridy, int gridwidth, int gridheight,
-			int weightx, int weighty) {
-		JLabel lbl = new JLabel(lblStr);
-		addGrid(lbl, 0, gridy, 1, 1, weightx, weighty);
-
-		ButtonGroup bG = new ButtonGroup();
-
-		JRadioButton radioButton1 = new JRadioButton(radioStr1);
-		bG.add(radioButton1);
-		addGrid(radioButton1, 1, gridy, 1, 1, weightx, weighty);
-
-		JRadioButton radioButton2 = new JRadioButton(radioStr2);
-		bG.add(radioButton2);
-		addGrid(radioButton2, 2, gridy, 1, 1, weightx, weighty);
-
-		JRadioButton radioButton3 = new JRadioButton(radioStr3);
-		bG.add(radioButton3);
-		if (addText) {
-			addGrid(radioButton3, 3, gridy, 1, 1, weightx, weighty);
-		} else {
-			addGrid(radioButton3, 3, gridy, 3, 1, weightx, weighty);
-		}
-
-		if (addText) {
-			JTextField textField1 = new JTextField();
-			textField1.setColumns(10);
-			addGrid(textField1, 4, gridy, 2, 1, weightx, weighty);
-		}
-	}
-
-	public void addLabel2Radio4Radio(String lblStr, String radioStr1,
-			String radioStr2, String textStr1, String textStr2, String textStr3, String textStr4, int gridx, int gridy,
-			int gridwidth, int gridheight, int weightx, int weighty) {
-		JLabel lbl = new JLabel(lblStr);
-		addGrid(lbl, 0, gridy, 1, 4, weightx, weighty);
-
-		ButtonGroup bG = new ButtonGroup();
-
-		JRadioButton radioButton1 = new JRadioButton(radioStr1);
-		bG.add(radioButton1);
-		addGrid(radioButton1, 1, gridy, 1, 4, weightx, weighty);
-
-		JRadioButton radioButton2 = new JRadioButton(radioStr2);
-		bG.add(radioButton2);
-		addGrid(radioButton2, 2, gridy, 1, 4, weightx, weighty);
-
-		JRadioButton sub_radioButton1 = new JRadioButton(textStr1);
-		addGrid(sub_radioButton1, 3, gridy, 3, 1, weightx, weighty);
-
-		JRadioButton sub_radioButton2 = new JRadioButton(textStr2);
-		addGrid(sub_radioButton2, 3, gridy + 1, 3, 1, weightx, weighty);
-
-		JRadioButton sub_radioButton3 = new JRadioButton(textStr3);
-		addGrid(sub_radioButton3, 3, gridy + 2, 3, 1, weightx, weighty);
-
-		JRadioButton sub_radioButton4 = new JRadioButton(textStr4);
-		addGrid(sub_radioButton4, 3, gridy + 3, 3, 1, weightx, weighty);
-
-	}
-*/
 	
 	public void addLabel(String str, int gridx, int gridy,
 			int gridwidth, int gridheight, int weightx, int weighty) {
@@ -335,9 +234,223 @@ public class ChartItemManager extends JFrame {
 		}
 	}
 	
-	public void SelectItemListener(ActionEvent e) {
 
+	
+	public void saveOnVariables() {
+		chart.setSchool(school);
+		chart.setGrade(grade);
+		chart.setClassNum(classNum);
+		chart.setStudentNum(studentNum);
+		chart.setName(name);
+		if(sex[0].isSelected()) chart.setSex(1);
+		else if(sex[1].isSelected()) chart.setSex(2);
+		chart.setBirth(birth);
+		
+		if(dentalInfection_radio[1].isSelected()) {	// 우식치아
+			chart.getDentalInfection().setCategory(1);
+			if(!dentalInfection_text[0].getText().equals(""))
+				chart.getDentalInfection().setTop(dentalInfection_text[0]);
+			if(!dentalInfection_text[1].getText().equals(""))
+				chart.getDentalInfection().setBottom(dentalInfection_text[1]);
+		}
+		
+		if(riskProducingTeeth_radio[1].isSelected()) {	// 우식발생위험치아
+			chart.getRiskProducingTeeth().setCategory(1);
+			if(!riskProducingTeeth_text[0].getText().equals(""))
+				chart.getRiskProducingTeeth().setTop(riskProducingTeeth_text[0]);
+			if(!riskProducingTeeth_text[1].getText().equals(""))
+				chart.getRiskProducingTeeth().setBottom(riskProducingTeeth_text[1]);
+		}
+		
+		if(defectiveTeeth_radio[1].isSelected()) {	// 결손치아
+			chart.getDefectiveTeeth().setCategory(1);
+			if(!defectiveTeeth_text[0].getText().equals(""))
+				chart.getDefectiveTeeth().setTop(defectiveTeeth_text[0]);
+			if(!defectiveTeeth_text[1].getText().equals(""))
+				chart.getDefectiveTeeth().setBottom(defectiveTeeth_text[1]);
+		}
 
+		if(softTissueDisease_radio[1].isSelected()) {	// 구내염 및 연조직질환
+			chart.getSoftTissueDisease().setCategory(1);
+			if(!softTissueDisease_text.getText().equals(""))
+				chart.getSoftTissueDisease().setReason(softTissueDisease_text.getText());
+		}
+		
+		if(crossbite_radio[1].isSelected()) {	// 부정교합
+			chart.getCrossbite().setCategory(1);
+		} else if(crossbite_radio[2].isSelected()) {
+			chart.getCrossbite().setCategory(2);
+		}
+		
+		if(oralHygiene_radio[1].isSelected()) {	// 구강위생 상태
+			chart.getOralHygiene().setCategory(1);
+		} else if(oralHygiene_radio[2].isSelected()) {
+			chart.getOralHygiene().setCategory(2);
+		}
+		
+		if(dentalCondition_radio[0].isSelected()) {	// 그밖의 치아상태
+			chart.getDentalCondition().setCategory(1);
+		} else if(dentalCondition_radio[1].isSelected()) {
+			chart.getDentalCondition().setCategory(2);
+		} else if(dentalCondition_radio[2].isSelected()) {
+			chart.getDentalCondition().setCategory(4);
+		}
+		
+		if(periodontalDisease_radio[1].isSelected()) {	// 치주질환
+			int checkedBit = 0;
+			
+			if(periodontalDisease_check[0].isSelected())
+				checkedBit = checkedBit | 1;
+			if(periodontalDisease_check[1].isSelected())
+				checkedBit = checkedBit | 2;
+			if(periodontalDisease_check[2].isSelected())
+				checkedBit = checkedBit | 4;
+			if(periodontalDisease_check[3].isSelected())
+				checkedBit = checkedBit | 8;
+			
+			chart.getPeriodontalDisease().setTop(checkedBit);
+		}
+		
+		if(abnormalSymptoms_radio[1].isSelected()) {	// 악관절 이상
+			chart.getAbnormalSymptoms().setCategory(1);
+		} 
+		
+		if(dentalWeariness_radio[1].isSelected()) {		// 치아마모증
+			chart.getDentalWeariness().setCategory(1);
+		} 
+		
+		if(wisdomeeth_radio[1].isSelected()) {			// 사랑니
+			chart.getWisdomeeth().setCategory(1);
+			if(!wisdomeeth_text.getText().equals(""))
+				chart.getWisdomeeth().setTop(wisdomeeth_text);
+		}
+	}
+
+	public void fillOnItems(EnterChart chart) {
+		this.chart = chart;
+		
+		school.setText(chart.getSchool());
+		if(chart.getGrade() > 0) {
+			grade.setText(chart.getGradeToString());
+		}
+		if(chart.getClassNum() > 0) {
+			classNum.setText(chart.getClassNumToString());
+		}
+		if(chart.getStudentNum() > 0) {
+			studentNum.setText(chart.getStudentNumToString());
+		}
+		name.setText(chart.getName());
+		if(chart.getSex() == 1) {
+			sex[0].setSelected(true);
+		} else if (chart.getSex() == 2) {
+			sex[1].setSelected(true);
+		}
+		if(chart.getBirth() > 0) {
+			birth.setText(chart.getBirthToString());
+		}
+		
+		if (chart.getDentalInfection().getCategory() == 2) {	// 우식치아
+			dentalInfection_radio[1].setSelected(true);
+			if(chart.getDentalInfection().getTop() > 0) {
+				dentalInfection_text[0].setText(chart.getDentalInfection().getTopToString());
+			} else if(chart.getDentalInfection().getBottom() > 0) {
+				dentalInfection_text[1].setText(chart.getDentalInfection().getBottomToString());
+			}	
+		}
+		
+		if (chart.getRiskProducingTeeth().getCategory() == 2) {		// 우식발생위험치아
+			riskProducingTeeth_radio[1].setSelected(true);
+			if(chart.getRiskProducingTeeth().getTop() > 0) {
+				riskProducingTeeth_text[0].setText(chart.getRiskProducingTeeth().getTopToString());
+			} else if(chart.getRiskProducingTeeth().getBottom() > 0) {
+				riskProducingTeeth_text[1].setText(chart.getRiskProducingTeeth().getBottomToString());
+			}	
+		}
+		
+		if (chart.getDefectiveTeeth().getCategory() == 2) {		// 결손치아
+			defectiveTeeth_radio[1].setSelected(true);
+			if(chart.getDefectiveTeeth().getTop() > 0) {
+				defectiveTeeth_text[0].setText(chart.getDefectiveTeeth().getTopToString());
+			} else if(chart.getDefectiveTeeth().getBottom() > 0) {
+				defectiveTeeth_text[1].setText(chart.getDefectiveTeeth().getBottomToString());
+			}	
+		}
+		
+		if (chart.getSoftTissueDisease().getCategory() == 2) {		// 구내염 및 연조직질환
+			softTissueDisease_radio[1].setSelected(true);
+			if(chart.getSoftTissueDisease().getTop() > 0) {
+				softTissueDisease_text.setText(chart.getSoftTissueDisease().getReason());
+			} 
+		}
+
+		if (chart.getCrossbite().getCategory() == 1) {		// 부정교합
+			crossbite_radio[1].isSelected();
+		} else if (chart.getCrossbite().getCategory() == 2) {
+			crossbite_radio[2].isSelected();
+		}
+	
+		if (chart.getOralHygiene().getCategory() == 1) {		// 구강위생 상태
+			oralHygiene_radio[1].isSelected();
+		} else if (chart.getOralHygiene().getCategory() == 2) {
+			oralHygiene_radio[2].isSelected();
+		}
+		
+		if (chart.getDentalCondition().getCategory() == 1) {		// 그밖의 치아상태
+			dentalCondition_radio[1].isSelected();
+		} else if (chart.getDentalCondition().getCategory() == 2) {
+			dentalCondition_radio[2].isSelected();
+		}
+
+		if (chart.getPeriodontalDisease().getCategory() > 0) {		// 치주질환
+			periodontalDisease_radio[1].isSelected();
+			int checkedBit = chart.getPeriodontalDisease().getTop();
+			if(checkedBit / 8 == 1) {
+				periodontalDisease_check[3].setSelected(true);
+				checkedBit = checkedBit % 8;
+			}
+			if(checkedBit / 4 == 1) {
+				periodontalDisease_check[2].setSelected(true);
+				checkedBit = checkedBit % 4 ;
+			}
+			if(checkedBit / 2 == 1) {
+				periodontalDisease_check[1].setSelected(true);
+				checkedBit = checkedBit % 2;
+			}
+			if(checkedBit == 1) {
+				periodontalDisease_check[0].setSelected(true);
+			}
+		}
+		
+		if(chart.getAbnormalSymptoms().getCategory() == 2) {	// 악관절 이상
+			abnormalSymptoms_radio[1].setSelected(true);
+		}
+		
+		if(chart.getDentalWeariness().getCategory() == 2) {	// 치아마모증
+			dentalWeariness_radio[1].setSelected(true);
+		}
+		
+		if(chart.getWisdomeeth().getCategory() == 2) {	// 사랑니
+			wisdomeeth_radio[1].setSelected(true);
+			if(chart.getWisdomeeth().getTop() > 0)
+				wisdomeeth_text.setText(chart.getWisdomeeth().getTopToString());
+		}
+		
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == saveBtn) {
+			try {
+				chart.save();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(null, "저장이 완료되었습니다.");
+			//dispose();
+		}
 	}
 }
 
