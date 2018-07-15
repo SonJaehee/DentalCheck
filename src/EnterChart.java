@@ -1,17 +1,12 @@
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import java.util.Base64;
 
 public class EnterChart implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	ChartItemManager chartItems;
 	
 	FileOutputStream fos = null;
@@ -260,14 +255,8 @@ public class EnterChart implements Serializable {
 
 	/**********************************************************/
 
-	public EnterChart(JScrollPane scrollPanel) {
-		initVariables();
-		chartItems = new ChartItemManager(scrollPanel, this);
-		chartItems.createItems();
-	}
-
 	public EnterChart() {
-
+		initVariables();
 	}
 
 	public void initVariables() {
@@ -300,57 +289,5 @@ public class EnterChart implements Serializable {
 		comprehensiveOpinion = 0; // 종합소견
 		homeMeasures = 0; // 가정에서의 조치사항
 	}
-	
-	public void save() throws IOException {
-		chartItems.saveOnVariables();
 
-		FileOutputStream fileStream = new FileOutputStream("student.txt");
-		ObjectOutputStream oos = new ObjectOutputStream(fileStream);
-		oos.writeObject(this);
-		oos.close();
-	}
-	
-	public void open() throws IOException, ClassNotFoundException{
-		FileInputStream fileStream = new FileInputStream("student.txt");
-		ObjectInputStream ois = new ObjectInputStream(fileStream);
-
-		Object obj = ois.readObject();
-		
-		//chartItems = new ChartItemManager();
-		EnterChart chart = new EnterChart();
-		chart = (EnterChart)obj;
-		//printAllVariables(chart);
-		chartItems.fillOnItems(chart);
-		
-		ois.close();
-	}
-	/*
-	public void printAllVariables(EnterChart chart) {
-
-		System.out.println("학교명 : " + chart.school);
-		System.out.println("학년 : " + chart.grade);
-		System.out.println("반 : " + chart.classNum);
-		System.out.println("번호 : " + chart.studentNum);
-		System.out.println("이름 : " + chart.name);
-		System.out.println("성별 : " + chart.sex);
-		System.out.println("생일 : " + chart.birth);
-
-		// 초중고 공통항목
-		System.out.println("우식치아 : " + chart.dentalInfection.getCategory());
-		System.out.println("우식위험 : " + chart.riskProducingTeeth.getCategory());
-		System.out.println("결손치아 : " + chart.defectiveTeeth.getCategory());
-		System.out.println("구내염 : " + chart.softTissueDisease.getCategory());
-		System.out.println("부정교합 : " + chart.crossbite.getCategory());
-		System.out.println("위생상태 : " + chart.oralHygiene.getCategory());
-		System.out.println("치아상태 : " + chart.dentalCondition.getCategory());
-
-		// 중고 추가항목
-		System.out.println("치주질환 : " + chart.periodontalDisease.getCategory());
-		System.out.println("악관절이상 : " + chart.abnormalSymptoms.getCategory());
-
-		// 고 추가항목
-		System.out.println("치아마모증 : " + chart.dentalWeariness.getCategory());
-		System.out.println("사랑니 : " + chart.wisdomeeth.getCategory());
-	}
-	*/
 }

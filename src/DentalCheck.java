@@ -44,8 +44,7 @@ public class DentalCheck extends JFrame implements ActionListener {
 	private JMenuItem[] macros;
 	private Dimension screen;
 
-	EnterChart chart;
-	ChartItemManager chartImtes;
+	ChartItemManager chartItems;
 	
 	public DentalCheck(String str) {
 		super(str);
@@ -150,7 +149,9 @@ public class DentalCheck extends JFrame implements ActionListener {
 		mainPanel.setRightComponent(rightScrollPanel);
 		
 		// set Items
-		chart = new EnterChart(rightScrollPanel);
+		//chart = new EnterChart(rightScrollPanel);
+		chartItems = new ChartItemManager(rightScrollPanel);
+		
 	}
 
 	protected JComponent makeTextPanel() {
@@ -305,20 +306,18 @@ public class DentalCheck extends JFrame implements ActionListener {
 		// TODO Auto-generated method stub
 		if (e.getSource() == mntmOpen) {
 			try {
-				chart = new EnterChart(rightScrollPanel);
-				chart.open();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				chartItems.open();
 			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "클래스 없음.");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "오픈 실패.");
 			}
 		} else if (e.getSource() == mntmSave) {
 			try {
-				chart.save();
+				chartItems.save();
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 		} else if (e.getSource() == mntmMacro) {
