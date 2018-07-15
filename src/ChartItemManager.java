@@ -13,6 +13,9 @@ import java.util.Base64;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.JFileChooser;
+
+import javax.swing.JOptionPane;
 
 public class ChartItemManager extends JFrame implements ActionListener {
 	
@@ -246,9 +249,22 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		
+		//생성할 파일경로 지정
+		String path = ChartItemManager.class.getResource("").getPath() + chart.getSchool();
+        //파일 객체 생성
+        File file = new File(path);
+        //!표를 붙여주어 파일이 존재하지 않는 경우의 조건을 걸어줌
+        if(!file.exists()){
+            //디렉토리 생성 메서드
+            file.mkdirs();
+            System.out.println("created directory successfully!");
+        }
+
+
+		String fileName = /*chart.getSchool() + "/" + chart.getGradeToString() + "/" + chart.getClassNumToString() + "/" + */ chart.getName();
 		try{
 			
-			fos = new FileOutputStream("object.dat");
+			fos = new FileOutputStream(path+ "/" + fileName);//"object.dat");
 			oos = new ObjectOutputStream(fos);
 			
 			oos.writeObject(chart);
@@ -267,12 +283,24 @@ public class ChartItemManager extends JFrame implements ActionListener {
 	
 	
 	public void open() throws IOException, ClassNotFoundException {
+		String path = ChartItemManager.class.getResource("").getPath();
+		JFileChooser chooser = new JFileChooser(path); //객체 생성
+
+		int ret = chooser.showOpenDialog(null);  //열기창 정의
+
+
+		if (ret != JFileChooser.APPROVE_OPTION) {
+			JOptionPane.showMessageDialog(null, "경로를 선택하지않았습니다.", "경고", JOptionPane.WARNING_MESSAGE);
+		    return;
+		}
+
+		String filePath = chooser.getSelectedFile().getPath();  //파일경로를 가져옴
 
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		
 		try{
-			fis = new FileInputStream("object.dat");
+			fis = new FileInputStream(filePath);
 			ois = new ObjectInputStream(fis);
 
 			EnterChart chart = (EnterChart)ois.readObject();
