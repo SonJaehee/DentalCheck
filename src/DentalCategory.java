@@ -3,6 +3,8 @@ import java.io.Serializable;
 import javax.swing.JTextField;
 
 public class DentalCategory implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private int category;	// 선택안되면 0, 없음은 1, 있음은 2, 4번째 라디오는 4
 	private int top;
 	private int bottom;

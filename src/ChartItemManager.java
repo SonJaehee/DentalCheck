@@ -1,16 +1,24 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Base64;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.JFileChooser;
+
+import javax.swing.JOptionPane;
 
 public class ChartItemManager extends JFrame implements ActionListener {
 	
-	EnterChart chart;// = new EnterChart();
 	JButton saveBtn;
 	
 	private JPanel panel;
@@ -72,7 +80,7 @@ public class ChartItemManager extends JFrame implements ActionListener {
 	
 	//public ChartItemManager() {	}
 	
-	public ChartItemManager(JScrollPane scrollPanel, EnterChart chart) {
+	public ChartItemManager(JScrollPane scrollPanel) {
 		panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.setBackground(Color.WHITE);
@@ -85,7 +93,7 @@ public class ChartItemManager extends JFrame implements ActionListener {
 	
 		panel.setLayout(gbl);
 		
-		this.chart = chart;
+		createItems();
 	}
 
 	void createItems() {
@@ -178,8 +186,6 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		addGrid(saveBtn, 5, nGridY, 1, 1, 0, 0);
 		
 		saveBtn.addActionListener(this);
-
-		
 	}
 	
 
@@ -235,8 +241,86 @@ public class ChartItemManager extends JFrame implements ActionListener {
 	}
 	
 
+	public void save() throws IOException {
+		EnterChart chart = new EnterChart();
+		
+		saveOnVariables(chart);
+		
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		
+		//생성할 파일경로 지정
+		String path = ChartItemManager.class.getResource("").getPath() + chart.getSchool();
+        //파일 객체 생성
+        File file = new File(path);
+        //!표를 붙여주어 파일이 존재하지 않는 경우의 조건을 걸어줌
+        if(!file.exists()){
+            //디렉토리 생성 메서드
+            file.mkdirs();
+            System.out.println("created directory successfully!");
+        }
+
+
+		String fileName = /*chart.getSchool() + "/" + chart.getGradeToString() + "/" + chart.getClassNumToString() + "/" + */ chart.getName();
+		try{
+			
+			fos = new FileOutputStream(path+ "/" + fileName);//"object.dat");
+			oos = new ObjectOutputStream(fos);
+			
+			oos.writeObject(chart);
+			
+			JOptionPane.showMessageDialog(null, "저장이 완료되었습니다.");
+		}catch(Exception e){
+
+			JOptionPane.showMessageDialog(null, "저장이 실패 했습니다.");
+			
+		}finally{
+			
+			if(fos != null) try{fos.close();}catch(IOException e){}
+			if(oos != null) try{oos.close();}catch(IOException e){}	
+		}
+	}
 	
-	public void saveOnVariables() {
+	
+	public void open() throws IOException, ClassNotFoundException {
+		String path = ChartItemManager.class.getResource("").getPath();
+		JFileChooser chooser = new JFileChooser(path); //객체 생성
+
+		int ret = chooser.showOpenDialog(null);  //열기창 정의
+
+
+		if (ret != JFileChooser.APPROVE_OPTION) {
+			JOptionPane.showMessageDialog(null, "경로를 선택하지않았습니다.", "경고", JOptionPane.WARNING_MESSAGE);
+		    return;
+		}
+
+		String filePath = chooser.getSelectedFile().getPath();  //파일경로를 가져옴
+
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		
+		try{
+			fis = new FileInputStream(filePath);
+			ois = new ObjectInputStream(fis);
+
+			EnterChart chart = (EnterChart)ois.readObject();
+			fillOnItems(chart);
+			
+			JOptionPane.showMessageDialog(null, "오픈이 완료되었습니다.");
+
+		}catch(Exception e){
+			
+			JOptionPane.showMessageDialog(null, "오픈이 실패했습니다.");
+			
+		}finally{
+			
+			if(fis != null) try{fis.close();}catch(IOException e){}
+			if(ois != null) try{ois.close();}catch(IOException e){}
+			
+		}
+
+	}
+	public void saveOnVariables(EnterChart chart) {
 		chart.setSchool(school);
 		chart.setGrade(grade);
 		chart.setClassNum(classNum);
@@ -247,7 +331,7 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		chart.setBirth(birth);
 		
 		if(dentalInfection_radio[1].isSelected()) {	// 우식치아
-			chart.getDentalInfection().setCategory(1);
+			chart.getDentalInfection().setCategory(2);
 			if(!dentalInfection_text[0].getText().equals(""))
 				chart.getDentalInfection().setTop(dentalInfection_text[0]);
 			if(!dentalInfection_text[1].getText().equals(""))
@@ -255,7 +339,7 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		}
 		
 		if(riskProducingTeeth_radio[1].isSelected()) {	// 우식발생위험치아
-			chart.getRiskProducingTeeth().setCategory(1);
+			chart.getRiskProducingTeeth().setCategory(2);
 			if(!riskProducingTeeth_text[0].getText().equals(""))
 				chart.getRiskProducingTeeth().setTop(riskProducingTeeth_text[0]);
 			if(!riskProducingTeeth_text[1].getText().equals(""))
@@ -263,7 +347,7 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		}
 		
 		if(defectiveTeeth_radio[1].isSelected()) {	// 결손치아
-			chart.getDefectiveTeeth().setCategory(1);
+			chart.getDefectiveTeeth().setCategory(2);
 			if(!defectiveTeeth_text[0].getText().equals(""))
 				chart.getDefectiveTeeth().setTop(defectiveTeeth_text[0]);
 			if(!defectiveTeeth_text[1].getText().equals(""))
@@ -271,21 +355,21 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		}
 
 		if(softTissueDisease_radio[1].isSelected()) {	// 구내염 및 연조직질환
-			chart.getSoftTissueDisease().setCategory(1);
+			chart.getSoftTissueDisease().setCategory(2);
 			if(!softTissueDisease_text.getText().equals(""))
 				chart.getSoftTissueDisease().setReason(softTissueDisease_text.getText());
 		}
 		
 		if(crossbite_radio[1].isSelected()) {	// 부정교합
-			chart.getCrossbite().setCategory(1);
-		} else if(crossbite_radio[2].isSelected()) {
 			chart.getCrossbite().setCategory(2);
+		} else if(crossbite_radio[2].isSelected()) {
+			chart.getCrossbite().setCategory(3);
 		}
 		
 		if(oralHygiene_radio[1].isSelected()) {	// 구강위생 상태
-			chart.getOralHygiene().setCategory(1);
-		} else if(oralHygiene_radio[2].isSelected()) {
 			chart.getOralHygiene().setCategory(2);
+		} else if(oralHygiene_radio[2].isSelected()) {
+			chart.getOralHygiene().setCategory(3);
 		}
 		
 		if(dentalCondition_radio[0].isSelected()) {	// 그밖의 치아상태
@@ -293,10 +377,12 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		} else if(dentalCondition_radio[1].isSelected()) {
 			chart.getDentalCondition().setCategory(2);
 		} else if(dentalCondition_radio[2].isSelected()) {
-			chart.getDentalCondition().setCategory(4);
+			chart.getDentalCondition().setCategory(3);
 		}
 		
 		if(periodontalDisease_radio[1].isSelected()) {	// 치주질환
+			chart.getPeriodontalDisease().setCategory(2);
+			
 			int checkedBit = 0;
 			
 			if(periodontalDisease_check[0].isSelected())
@@ -312,22 +398,21 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		}
 		
 		if(abnormalSymptoms_radio[1].isSelected()) {	// 악관절 이상
-			chart.getAbnormalSymptoms().setCategory(1);
+			chart.getAbnormalSymptoms().setCategory(2);
 		} 
 		
 		if(dentalWeariness_radio[1].isSelected()) {		// 치아마모증
-			chart.getDentalWeariness().setCategory(1);
+			chart.getDentalWeariness().setCategory(2);
 		} 
 		
 		if(wisdomeeth_radio[1].isSelected()) {			// 사랑니
-			chart.getWisdomeeth().setCategory(1);
+			chart.getWisdomeeth().setCategory(2);
 			if(!wisdomeeth_text.getText().equals(""))
 				chart.getWisdomeeth().setTop(wisdomeeth_text);
 		}
 	}
 
 	public void fillOnItems(EnterChart chart) {
-		this.chart = chart;
 		
 		school.setText(chart.getSchool());
 		if(chart.getGrade() > 0) {
@@ -378,32 +463,34 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		
 		if (chart.getSoftTissueDisease().getCategory() == 2) {		// 구내염 및 연조직질환
 			softTissueDisease_radio[1].setSelected(true);
-			if(chart.getSoftTissueDisease().getTop() > 0) {
-				softTissueDisease_text.setText(chart.getSoftTissueDisease().getReason());
-			} 
+			softTissueDisease_text.setText(chart.getSoftTissueDisease().getReason());
 		}
 
-		if (chart.getCrossbite().getCategory() == 1) {		// 부정교합
-			crossbite_radio[1].isSelected();
-		} else if (chart.getCrossbite().getCategory() == 2) {
-			crossbite_radio[2].isSelected();
+		if (chart.getCrossbite().getCategory() == 2) {		// 부정교합
+			crossbite_radio[1].setSelected(true);
+		} else if (chart.getCrossbite().getCategory() == 3) {
+			crossbite_radio[2].setSelected(true);
 		}
 	
-		if (chart.getOralHygiene().getCategory() == 1) {		// 구강위생 상태
-			oralHygiene_radio[1].isSelected();
-		} else if (chart.getOralHygiene().getCategory() == 2) {
-			oralHygiene_radio[2].isSelected();
+		if (chart.getOralHygiene().getCategory() == 2) {		// 구강위생 상태
+			oralHygiene_radio[1].setSelected(true);
+		} else if (chart.getOralHygiene().getCategory() == 3) {
+			oralHygiene_radio[2].setSelected(true);
 		}
 		
 		if (chart.getDentalCondition().getCategory() == 1) {		// 그밖의 치아상태
-			dentalCondition_radio[1].isSelected();
+			dentalCondition_radio[0].setSelected(true);
 		} else if (chart.getDentalCondition().getCategory() == 2) {
-			dentalCondition_radio[2].isSelected();
+			dentalCondition_radio[1].setSelected(true);
+		} else if (chart.getDentalCondition().getCategory() == 3) {
+			dentalCondition_radio[2].setSelected(true);
 		}
 
-		if (chart.getPeriodontalDisease().getCategory() > 0) {		// 치주질환
-			periodontalDisease_radio[1].isSelected();
+		if (chart.getPeriodontalDisease().getCategory() == 2) {		// 치주질환
+			periodontalDisease_radio[1].setSelected(true);
+			
 			int checkedBit = chart.getPeriodontalDisease().getTop();
+			
 			if(checkedBit / 8 == 1) {
 				periodontalDisease_check[3].setSelected(true);
 				checkedBit = checkedBit % 8;
@@ -443,13 +530,13 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		// TODO Auto-generated method stub
 		if (e.getSource() == saveBtn) {
 			try {
-				chart.save();
+				save();
+				
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				
 			}
-			JOptionPane.showMessageDialog(null, "저장이 완료되었습니다.");
-			//dispose();
 		}
 	}
 }
