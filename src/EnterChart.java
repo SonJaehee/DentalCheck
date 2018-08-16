@@ -7,7 +7,7 @@ import javax.swing.JTextField;
 public class EnterChart implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	ChartItemManager chartItems;
+	ChartView chartItems;
 	
 	FileOutputStream fos = null;
 	ObjectOutputStream oos = null;

@@ -17,7 +17,11 @@ import javax.swing.JFileChooser;
 
 import javax.swing.JOptionPane;
 
-public class ChartItemManager extends JFrame implements ActionListener {
+public class ChartView extends JFrame implements ActionListener {
+	private static final long serialVersionUID = -8300169991685860365L;
+
+	ItemFactory item;
+	StatisticsView statisticsItem;
 	
 	JButton saveBtn;
 	
@@ -77,10 +81,8 @@ public class ChartItemManager extends JFrame implements ActionListener {
 	// 종합소견
 	private JTextField comprehensiveOpinion = new JTextField(MAX_TEXTFIELD_LENGTH);		// 종합소견
 	private JTextField homeMeasures = new JTextField(MAX_TEXTFIELD_LENGTH);				// 가정에서의 조치사항
-	
-	//public ChartItemManager() {	}
-	
-	public ChartItemManager(JScrollPane scrollPanel) {
+
+	public ChartView(JScrollPane scrollPanel) {
 		panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.setBackground(Color.WHITE);
@@ -92,167 +94,215 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		gbc.insets = new Insets(3, 1, 3, 1); // top, left, bottom, right
 	
 		panel.setLayout(gbl);
-		
+		item = new ItemFactory(panel, gbc);
 		createItems();
 	}
 
 	void createItems() {
 		// 학생정보
 		int nGridY = 0; // row
-		//int nGridX = 5;	// col
 		
-		addLabel("학교명", 0, nGridY, 1, 1, 0, 0);
-		addText(school, 1, nGridY++, 9, 1, 0, 0);
+		item.addLabel("학교명", 0, nGridY, 1, 1, 0, 0);
+		item.addText(school, 1, nGridY++, 9, 1, 0, 0);
 		
-		addLabel("학년", 0, nGridY, 1, 1, 0, 0);
-		addText(grade, 1, nGridY++, 9, 1, 0, 0);
+		item.addLabel("학년", 0, nGridY, 1, 1, 0, 0);
+		item.addText(grade, 1, nGridY++, 9, 1, 0, 0);
 		
-		addLabel("반", 0, nGridY, 1, 1, 0, 0);
-		addText(classNum, 1, nGridY++, 9, 1, 0, 0);
+		item.addLabel("반", 0, nGridY, 1, 1, 0, 0);
+		item.addText(classNum, 1, nGridY++, 9, 1, 0, 0);
 		
-		addLabel("번호", 0, nGridY, 1, 1, 0, 0);
-		addText(studentNum, 1, nGridY++, 9, 1, 0, 0);
+		item.addLabel("번호", 0, nGridY, 1, 1, 0, 0);
+		item.addText(studentNum, 1, nGridY++, 9, 1, 0, 0);
 		
-		addLabel("이름", 0, nGridY, 1, 1, 0, 0);
-		addText(name, 1, nGridY++, 9, 1, 0, 0);
+		item.addLabel("이름", 0, nGridY, 1, 1, 0, 0);
+		item.addText(name, 1, nGridY++, 9, 1, 0, 0);
 		
-		addLabel("성별", 0, nGridY, 1, 1, 0, 0);
-		addRadio(sexStr, sex, 1, nGridY++, 3, 1, 0, 0, -1);
+		item.addLabel("성별", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(sexStr, sex, 1, nGridY++, 3, 1, 0, 0, -1);
 		
-		addLabel("생년월일", 0, nGridY, 1, 1, 0, 0);
-		addText(birth, 1, nGridY++, 9, 1, 0, 0);
+		item.addLabel("생년월일", 0, nGridY, 1, 1, 0, 0);
+		item.addText(birth, 1, nGridY++, 9, 1, 0, 0);
 		
 
 		// 구강검사결과 및 판정
 		// 초중고 공통항목
-		addLabel("우식치아", 0, nGridY, 1, 2, 0, 0);
-		addRadio(existStr, dentalInfection_radio, 1, nGridY, 3, 2, 0, 0, 0);
-		addText(updownStr, dentalInfection_text, 7, nGridY, 3, 1, 0, 0);
+		item.addLabel("우식치아", 0, nGridY, 1, 2, 0, 0);
+		item.addRadio(existStr, dentalInfection_radio, 1, nGridY, 3, 2, 0, 0, 0);
+		item.addText(updownStr, dentalInfection_text, 7, nGridY, 3, 1, 0, 0);
 		nGridY+=2;
 		
-		addLabel("우식발생위험치아", 0, nGridY, 1, 2, 0, 0);
-		addRadio(existStr, riskProducingTeeth_radio, 1, nGridY, 3, 2, 0, 0, 0);
-		addText(updownStr, riskProducingTeeth_text, 7, nGridY, 3, 1, 0, 0);
+		item.addLabel("우식발생위험치아", 0, nGridY, 1, 2, 0, 0);
+		item.addRadio(existStr, riskProducingTeeth_radio, 1, nGridY, 3, 2, 0, 0, 0);
+		item.addText(updownStr, riskProducingTeeth_text, 7, nGridY, 3, 1, 0, 0);
 		nGridY+=2;
 
-		addLabel("결손치아(영구치에 한함)", 0, nGridY, 1, 2, 0, 0);
-		addRadio(existStr, defectiveTeeth_radio, 1, nGridY, 3, 2, 0, 0, 0);
-		addText(updownStr, defectiveTeeth_text, 7, nGridY, 3, 1, 0, 0);
+		item.addLabel("결손치아(영구치에 한함)", 0, nGridY, 1, 2, 0, 0);
+		item.addRadio(existStr, defectiveTeeth_radio, 1, nGridY, 3, 2, 0, 0, 0);
+		item.addText(updownStr, defectiveTeeth_text, 7, nGridY, 3, 1, 0, 0);
 		nGridY+=2;
 		
-		addLabel("구내염 및 연조직질환", 0, nGridY, 1, 1, 0, 0);
-		addRadio(existStr, softTissueDisease_radio, 1, nGridY, 3, 1, 0, 0, 0);
-		addText(softTissueDisease_text, 8, nGridY++, 2, 1, 0, 0);
+		item.addLabel("구내염 및 연조직질환", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(existStr, softTissueDisease_radio, 1, nGridY, 3, 1, 0, 0, 0);
+		item.addText(softTissueDisease_text, 8, nGridY++, 2, 1, 0, 0);
 
-		addLabel("부정교합", 0, nGridY, 1, 1, 0, 0);
-		addRadio(crossbiteStr, crossbite_radio, 1, nGridY++, 3, 1, 0, 0, 0);
+		item.addLabel("부정교합", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(crossbiteStr, crossbite_radio, 1, nGridY++, 3, 1, 0, 0, 0);
 		
-		addLabel("구강위생상태", 0, nGridY, 1, 1, 0, 0);
-		addRadio(oralHygieneStr, oralHygiene_radio, 1, nGridY++, 3, 1, 0, 0, 0);
+		item.addLabel("구강위생상태", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(oralHygieneStr, oralHygiene_radio, 1, nGridY++, 3, 1, 0, 0, 0);
 		
-		addLabel("그밖의 치아상태", 0, nGridY, 1, 1, 0, 0);
-		addRadio(dentalConditionStr, dentalCondition_radio, 1, nGridY++, 3, 1, 0, 0, -1);
+		item.addLabel("그밖의 치아상태", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(dentalConditionStr, dentalCondition_radio, 1, nGridY++, 3, 1, 0, 0, -1);
 		
 
 		// 중고 추가항목
-		addLabel("치주질환", 0, nGridY, 1, 4, 0, 0);
-		addRadio(existStr, periodontalDisease_radio, 1, nGridY, 3, 4, 0, 0, 0);
-		addCheck(periodontalDiseaseStr, periodontalDisease_check, 7, nGridY, 3, 1, 0, 0);
+		item.addLabel("치주질환", 0, nGridY, 1, 4, 0, 0);
+		item.addRadio(existStr, periodontalDisease_radio, 1, nGridY, 3, 4, 0, 0, 0);
+		item.addCheck(periodontalDiseaseStr, periodontalDisease_check, 7, nGridY, 3, 1, 0, 0);
 		nGridY+=4;
 		
-		addLabel("악관절 이상", 0, nGridY, 1, 1, 0, 0);
-		addRadio(existStr, abnormalSymptoms_radio, 1, nGridY++, 3, 1, 0, 0, 0);
+		item.addLabel("악관절 이상", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(existStr, abnormalSymptoms_radio, 1, nGridY++, 3, 1, 0, 0, 0);
 		
 		// 고등 추가항목
-		addLabel("치아마모증", 0, nGridY, 1, 1, 0, 0);
-		addRadio(existStr, dentalWeariness_radio, 1, nGridY++, 3, 1, 0, 0, 0);
+		item.addLabel("치아마모증", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(existStr, dentalWeariness_radio, 1, nGridY++, 3, 1, 0, 0, 0);
 		
-		addLabel("제3대구치(사랑니)", 0, nGridY, 1, 1, 0, 0);
-		addRadio(existStr, wisdomeeth_radio, 1, nGridY, 3, 1, 0, 0, 0);
-		addText(wisdomeeth_text, 8, nGridY++, 3, 1, 0, 0);
+		item.addLabel("제3대구치(사랑니)", 0, nGridY, 1, 1, 0, 0);
+		item.addRadio(existStr, wisdomeeth_radio, 1, nGridY, 3, 1, 0, 0, 0);
+		item.addText(wisdomeeth_text, 8, nGridY++, 3, 1, 0, 0);
 		
 
 		// 종합소견
-		addLabel("종합소견", 0, nGridY, 1, 2, 0, 0);
-		addText(comprehensiveOpinion, 1, nGridY, 9, 2, 0, 0);
+		item.addLabel("종합소견", 0, nGridY, 1, 2, 0, 0);
+		item.addText(comprehensiveOpinion, 1, nGridY, 9, 2, 0, 0);
 		nGridY += 2;
 		
-		addLabel("가정에서의 조치사항", 0, nGridY, 1, 2, 0, 0);
-		addText(homeMeasures, 1, nGridY, 9, 2, 0, 0);
+		item.addLabel("가정에서의 조치사항", 0, nGridY, 1, 2, 0, 0);
+		item.addText(homeMeasures, 1, nGridY, 9, 2, 0, 0);
 		nGridY += 2;
 
 
 		saveBtn = new JButton("SAVE");
-		addGrid(saveBtn, 5, nGridY, 1, 1, 0, 0);
+		item.addGrid(saveBtn, 5, nGridY, 1, 1, 0, 0);
 		
 		saveBtn.addActionListener(this);
 	}
-	
 
-	private void addGrid(Component c, int gridx, int gridy, int gridwidth,
-			int gridheight, int weightx, int weighty) {
-		gbc.gridx = gridx;
-		gbc.gridy = gridy;
-		gbc.gridwidth = gridwidth;
-		gbc.gridheight = gridheight;
-		gbc.weightx = weightx;
-		gbc.weighty = weighty;
-		// gbl.setConstraints(c, gbc);
-		panel.add(c, gbc);
-	}
+	void reset() {
+		// 학생정보
+		school.setText("");
+		grade.setText("");
+		classNum.setText("");
+		studentNum.setText("");
+		name.setText("");
+		if(sex[0].isSelected())
+			sex[0].setSelected(false);
+		if(sex[1].isSelected())
+			sex[1].setSelected(false);
+		birth.setText("");
 
-	
-	public void addLabel(String str, int gridx, int gridy,
-			int gridwidth, int gridheight, int weightx, int weighty) {
-		JLabel lbl = new JLabel(str);
-		addGrid(lbl, gridx, gridy, 1, gridheight, weightx, weighty);
-	}
-
-	public void addText(JTextField text, int gridx, int gridy,
-			int gridwidth, int gridheight, int weightx, int weighty) {
-		addGrid(text, gridx, gridy, gridwidth, gridheight, weightx, weighty);
-	}
-
-	public void addText(String[] str, JTextField[] text, int gridx, int gridy,
-			int gridwidth, int gridheight, int weightx, int weighty) {
-		for(int i=0;i<text.length;i++) {
-			addLabel(str[i], gridx, gridy+i, 1, gridheight, weightx, weighty);
-			text[i] = new JTextField(10);
-			addGrid(text[i], gridx+1, gridy+i, gridwidth-1, gridheight, weightx, weighty);
+		// 구강검사결과 및 판정
+		// 초중고 공통항목
+		if(!dentalInfection_radio[0].isSelected())	//우식치아
+		{
+			dentalInfection_radio[0].setSelected(true);
+			dentalInfection_radio[1].setSelected(false);
+			dentalInfection_text[0].setText("");
+			dentalInfection_text[1].setText("");
 		}
-	}
-	
-	public void addRadio(String[] str, JRadioButton[] c, int gridx, int gridy,
-			int gridwidth, int gridheight, int weightx, int weighty, int default_selected_index) {
-		ButtonGroup bG = new ButtonGroup();
-		for(int i=0;i<c.length;i++) {
-			c[i] = new JRadioButton(str[i], default_selected_index==i);
-			addGrid(c[i], gridx+i*gridwidth, gridy, gridwidth, gridheight, weightx, weighty);
-			bG.add(c[i]);
+		
+		if(!riskProducingTeeth_radio[0].isSelected())	//우식발생위험치아
+		{
+			riskProducingTeeth_radio[0].setSelected(true);
+			riskProducingTeeth_radio[1].setSelected(false);
+			riskProducingTeeth_text[0].setText("");
+			riskProducingTeeth_text[1].setText("");
 		}
-	}
 	
-	public void addCheck(String[] str, JCheckBox[] c, int gridx, int gridy,
-			int gridwidth, int gridheight, int weightx, int weighty) {
-		for(int i=0;i<c.length;i++) {
-			c[i] = new JCheckBox(str[i]);
-			addGrid(c[i], gridx, gridy+i, gridwidth, gridheight, weightx, weighty);
+		if(!defectiveTeeth_radio[0].isSelected())	//결손치아(영구치에 한함)
+		{
+			defectiveTeeth_radio[0].setSelected(true);
+			defectiveTeeth_radio[1].setSelected(false);
+			defectiveTeeth_text[0].setText("");
+			defectiveTeeth_text[1].setText("");
 		}
-	}
-	
 
+		if(!softTissueDisease_radio[0].isSelected())	//구내염 및 연조직질환
+		{
+			softTissueDisease_radio[0].setSelected(true);
+			softTissueDisease_radio[1].setSelected(false);
+			softTissueDisease_text.setText("");
+		}
+		
+		if(!crossbite_radio[0].isSelected())	//부정교합
+		{
+			crossbite_radio[0].setSelected(true);
+			crossbite_radio[1].setSelected(false);
+			crossbite_radio[2].setSelected(false);
+		}
+		
+		if(!oralHygiene_radio[0].isSelected())	//구강위생상태
+		{
+			oralHygiene_radio[0].setSelected(true);
+			oralHygiene_radio[1].setSelected(false);
+			oralHygiene_radio[2].setSelected(false);
+		}
+		
+		if(!dentalCondition_radio[0].isSelected())	//그밖의 치아상태
+		{
+			dentalCondition_radio[0].setSelected(true);
+			dentalCondition_radio[1].setSelected(false);
+			dentalCondition_radio[2].setSelected(false);
+		}
+		
+		// 중고 추가항목
+		if(!periodontalDisease_radio[0].isSelected())	//치주질환
+		{
+			periodontalDisease_radio[0].setSelected(true);
+			periodontalDisease_radio[1].setSelected(false);
+			if(periodontalDisease_check[0].isSelected())
+				periodontalDisease_check[0].setSelected(false);
+			if(periodontalDisease_check[1].isSelected())
+				periodontalDisease_check[1].setSelected(false);
+			if(periodontalDisease_check[2].isSelected())
+				periodontalDisease_check[2].setSelected(false);
+			if(periodontalDisease_check[3].isSelected())
+				periodontalDisease_check[3].setSelected(false);
+		}
+		
+		if(!abnormalSymptoms_radio[0].isSelected())	//악관절 이상
+		{
+			abnormalSymptoms_radio[0].setSelected(true);
+			abnormalSymptoms_radio[1].setSelected(false);
+		}
+
+		if(!dentalWeariness_radio[0].isSelected())	//치아마모증
+		{
+			dentalWeariness_radio[0].setSelected(true);
+			dentalWeariness_radio[1].setSelected(false);
+		}
+		
+		if(!wisdomeeth_radio[0].isSelected())	//제3대구치(사랑니)
+		{
+			wisdomeeth_radio[0].setSelected(true);
+			wisdomeeth_radio[1].setSelected(false);
+			wisdomeeth_text.setText("");
+		}
+		
+		comprehensiveOpinion.setText("");	//종합소견
+		homeMeasures.setText("");			//가정에서의 조치사항
+	}
+	
 	public void save() throws IOException {
 		EnterChart chart = new EnterChart();
-		
-		saveOnVariables(chart);
-		
-		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
+		StatisticsVariables statistics = new StatisticsVariables();
 		
 		//생성할 파일경로 지정
-		String path = ChartItemManager.class.getResource("").getPath() + chart.getSchool();
+		String schoolPath = ChartView.class.getResource("").getPath() + school.getText();
+		
         //파일 객체 생성
-        File file = new File(path);
+        File file = new File(schoolPath);
         //!표를 붙여주어 파일이 존재하지 않는 경우의 조건을 걸어줌
         if(!file.exists()){
             //디렉토리 생성 메서드
@@ -260,19 +310,56 @@ public class ChartItemManager extends JFrame implements ActionListener {
             System.out.println("created directory successfully!");
         }
 
+		//String chart_fileName = /*chart.getSchool() + "/" + chart.getGradeToString() + "/" + chart.getClassNumToString() + "/" + */ school.getText();
+		String statistics_fileName = "statistics";
 
-		String fileName = /*chart.getSchool() + "/" + chart.getGradeToString() + "/" + chart.getClassNumToString() + "/" + */ chart.getName();
+		File pathWithDir = new File(schoolPath, statistics_fileName);
+		if(pathWithDir.exists())
+		{
+			try {
+				statistics = statistics.open(schoolPath + "/" + statistics_fileName,statistics);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		saveOnChartVariables(chart,statistics);
+		saveOnStatisticsVariables(statistics);
+		
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		
+		// 검진차트 저장
 		try{
 			
-			fos = new FileOutputStream(path+ "/" + fileName);//"object.dat");
+			fos = new FileOutputStream(schoolPath+ "/" + name.getText());	// C://.../학교명/학생이름 파일
 			oos = new ObjectOutputStream(fos);
 			
 			oos.writeObject(chart);
 			
-			JOptionPane.showMessageDialog(null, "저장이 완료되었습니다.");
+			JOptionPane.showMessageDialog(null, "차트 저장이 완료되었습니다.");
 		}catch(Exception e){
 
-			JOptionPane.showMessageDialog(null, "저장이 실패 했습니다.");
+			JOptionPane.showMessageDialog(null, "차트 저장이 실패 했습니다.");
+			
+		}finally{
+			
+			if(fos != null) try{fos.close();}catch(IOException e){}
+			if(oos != null) try{oos.close();}catch(IOException e){}	
+		}
+		
+		// 통계표 저장
+		try{
+			
+			fos = new FileOutputStream(schoolPath+ "/" + statistics_fileName);
+			oos = new ObjectOutputStream(fos);
+			
+			oos.writeObject(statistics);
+			
+			JOptionPane.showMessageDialog(null, "통계표 저장이 완료되었습니다.");
+		}catch(Exception e){
+
+			JOptionPane.showMessageDialog(null, "통계표 저장이 실패 했습니다.");
 			
 		}finally{
 			
@@ -283,9 +370,9 @@ public class ChartItemManager extends JFrame implements ActionListener {
 	
 	
 	public void open() throws IOException, ClassNotFoundException {
-		String path = ChartItemManager.class.getResource("").getPath();
+		String path = ChartView.class.getResource("").getPath();
 		JFileChooser chooser = new JFileChooser(path); //객체 생성
-
+		
 		int ret = chooser.showOpenDialog(null);  //열기창 정의
 
 
@@ -295,32 +382,33 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		}
 
 		String filePath = chooser.getSelectedFile().getPath();  //파일경로를 가져옴
-
+		
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		
+		// 검진 차트 오픈
 		try{
 			fis = new FileInputStream(filePath);
 			ois = new ObjectInputStream(fis);
-
+	
 			EnterChart chart = (EnterChart)ois.readObject();
-			fillOnItems(chart);
-			
-			JOptionPane.showMessageDialog(null, "오픈이 완료되었습니다.");
+			fillOnChartItems(chart);
+				
+			//JOptionPane.showMessageDialog(null, "차트 오픈이 완료되었습니다.");
 
 		}catch(Exception e){
-			
-			JOptionPane.showMessageDialog(null, "오픈이 실패했습니다.");
-			
+				
+			JOptionPane.showMessageDialog(null, "차트 오픈이 실패했습니다.");
+				
 		}finally{
-			
+				
 			if(fis != null) try{fis.close();}catch(IOException e){}
 			if(ois != null) try{ois.close();}catch(IOException e){}
-			
+				
 		}
-
 	}
-	public void saveOnVariables(EnterChart chart) {
+	
+	public void saveOnChartVariables(EnterChart chart, StatisticsVariables statistics) {
 		chart.setSchool(school);
 		chart.setGrade(grade);
 		chart.setClassNum(classNum);
@@ -412,7 +500,45 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		}
 	}
 
-	public void fillOnItems(EnterChart chart) {
+	public void saveOnStatisticsVariables(StatisticsVariables statistics) {
+		statistics.setGrade(Integer.parseInt(grade.getText()));
+		
+		if(dentalInfection_radio[1].isSelected())
+		{
+			if(sex[0].isSelected())
+				statistics.setDentalInfection_man(statistics.getDentalInfection_man()+1);
+			else if(sex[1].isSelected())
+				statistics.setDentalInfection_woman(statistics.getDentalInfection_woman()+1);
+			statistics.setDentalInfection_total(statistics.getDentalInfection_total()+1);
+		}
+		if(periodontalDisease_radio[1].isSelected())
+		{
+			if(sex[0].isSelected())
+				statistics.setPeriodontalDisease_man(statistics.getPeriodontalDisease_man()+1);
+			else if(sex[1].isSelected())
+				statistics.setPeriodontalDisease_woman(statistics.getPeriodontalDisease_woman()+1);
+			statistics.setPeriodontalDisease_total(statistics.getPeriodontalDisease_total()+1);
+		}
+		if(crossbite_radio[1].isSelected())
+		{
+			if(sex[0].isSelected())
+				statistics.setCrossbite_man(statistics.getCrossbite_man()+1);
+			else if(sex[1].isSelected())
+				statistics.setCrossbite_woman(statistics.getCrossbite_woman()+1);
+			statistics.setCrossbite_total(statistics.getCrossbite_total()+1);
+		}
+
+		if(dentalInfection_radio[1].isSelected() || periodontalDisease_radio[1].isSelected() || crossbite_radio[1].isSelected())
+		{
+			if(sex[0].isSelected())
+				statistics.setPersonnel_man(statistics.getPersonnel_man()+1);
+			else if(sex[1].isSelected())
+				statistics.setPersonnel_woman(statistics.getPersonnel_woman()+1);
+			statistics.setPersonnel_total(statistics.getPersonnel_total()+1);
+		}
+	}
+	
+	public void fillOnChartItems(EnterChart chart) {
 		
 		school.setText(chart.getSchool());
 		if(chart.getGrade() > 0) {
@@ -525,15 +651,15 @@ public class ChartItemManager extends JFrame implements ActionListener {
 		
 	}
 
+
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if (e.getSource() == saveBtn) {
 			try {
 				save();
 				
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				
 			}
