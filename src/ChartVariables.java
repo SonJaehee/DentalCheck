@@ -4,7 +4,7 @@ import java.io.Serializable;
 import javax.swing.JTextField;
 
 
-public class EnterChart implements Serializable {
+public class ChartVariables implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	ChartView chartItems;
@@ -255,7 +255,7 @@ public class EnterChart implements Serializable {
 
 	/**********************************************************/
 
-	public EnterChart() {
+	public ChartVariables() {
 		initVariables();
 	}
 

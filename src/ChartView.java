@@ -295,7 +295,7 @@ public class ChartView extends JFrame implements ActionListener {
 	}
 	
 	public void save() throws IOException {
-		EnterChart chart = new EnterChart();
+		ChartVariables chart = new ChartVariables();
 		StatisticsVariables statistics = new StatisticsVariables();
 		
 		//생성할 파일경로 지정
@@ -391,7 +391,7 @@ public class ChartView extends JFrame implements ActionListener {
 			fis = new FileInputStream(filePath);
 			ois = new ObjectInputStream(fis);
 	
-			EnterChart chart = (EnterChart)ois.readObject();
+			ChartVariables chart = (ChartVariables)ois.readObject();
 			fillOnChartItems(chart);
 				
 			//JOptionPane.showMessageDialog(null, "차트 오픈이 완료되었습니다.");
@@ -408,7 +408,7 @@ public class ChartView extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void saveOnChartVariables(EnterChart chart, StatisticsVariables statistics) {
+	public void saveOnChartVariables(ChartVariables chart, StatisticsVariables statistics) {
 		chart.setSchool(school);
 		chart.setGrade(grade);
 		chart.setClassNum(classNum);
@@ -538,7 +538,7 @@ public class ChartView extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void fillOnChartItems(EnterChart chart) {
+	public void fillOnChartItems(ChartVariables chart) {
 		
 		school.setText(chart.getSchool());
 		if(chart.getGrade() > 0) {
