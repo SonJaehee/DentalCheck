@@ -310,7 +310,7 @@ public class ChartView extends JFrame implements ActionListener {
             System.out.println("created directory successfully!");
         }
 
-		//String chart_fileName = /*chart.getSchool() + "/" + chart.getGradeToString() + "/" + chart.getClassNumToString() + "/" + */ school.getText();
+		String chart_fileName = schoolPath + "/" + grade.getText() + "/" + classNum.getText();	// 'C://.../학교명/학년/반' 디렉토리
 		String statistics_fileName = "statistics";
 
 		File pathWithDir = new File(schoolPath, statistics_fileName);
@@ -331,8 +331,8 @@ public class ChartView extends JFrame implements ActionListener {
 		
 		// 검진차트 저장
 		try{
-			
-			fos = new FileOutputStream(schoolPath+ "/" + name.getText());	// C://.../학교명/학생이름 파일
+			String studentPath = chart_fileName + "/" + name.getText();
+			fos = new FileOutputStream(studentPath);	// 'C://.../학교명/학년/반/학생이름' 파일
 			oos = new ObjectOutputStream(fos);
 			
 			oos.writeObject(chart);

@@ -1,5 +1,7 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,7 +31,8 @@ public class DentalCheck extends JFrame implements ActionListener {
 	
 	private JScrollPane chartScrollPanel = new JScrollPane(); // tab1 panel
 	private JPanel statisticsPanel = new JPanel(); // tab2 panel
-
+	private JScrollPane listScrollPanel = new JScrollPane(); // tab3 panel
+	
 	private JMenuBar menuBar;
 	private JMenu mnFile;
 	private JMenu mnEdit;
@@ -44,7 +47,8 @@ public class DentalCheck extends JFrame implements ActionListener {
 
 	ChartView chartItems;
 	StatisticsView statisticItems;
-
+	StudentListView studentListItems;
+	
 	public DentalCheck(String str) {
 		super(str);
 
@@ -83,13 +87,40 @@ public class DentalCheck extends JFrame implements ActionListener {
 
 		rightPanel.add(tabbedPane);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
+		
 		// set Items
 		tab1.add("Center", chartScrollPanel);
 		chartItems = new ChartView(chartScrollPanel);
 
 		tab2.add("Center", statisticsPanel);
 		statisticItems = new StatisticsView(statisticsPanel);
+		
+		tab3.add("Center", listScrollPanel);
+		studentListItems = new StudentListView(listScrollPanel);
+		
+		tabbedPane.addChangeListener(new ChangeListener() {
+	        public void stateChanged(ChangeEvent e) {
+	        	int selectedTabIndex = tabbedPane.getSelectedIndex();
+	            switch(selectedTabIndex)
+	            {
+	            case 1:
+	            	try {
+						statisticItems.open();
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "클래스 없음.");
+					} catch (IOException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "오픈 실패.");
+					}
+	            	break;
+	            case 2:
+	            	studentListItems.createItems();
+	            	break;
+	            }
+	        }
+	    });
+		
 	}
 
 	protected JComponent makeTextPanel() {
@@ -148,15 +179,24 @@ public class DentalCheck extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
 		if (e.getSource() == mntmNew) {
 			chartItems.reset();
 		} else if (e.getSource() == mntmOpen) {
 			try {
 				int selectedTabIndex = tabbedPane.getSelectedIndex();
-				if(selectedTabIndex == 0)
+				switch(selectedTabIndex)
+	            {
+				case 0:
 					chartItems.open();
-				else if(selectedTabIndex == 1)
-					statisticItems.open();
+					break;
+	            case 1:
+	            	statisticItems.open();
+	            	break;
+	            case 2:
+	            	studentListItems.createItems();
+	            	break;
+	            }
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(null, "클래스 없음.");
