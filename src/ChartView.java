@@ -298,26 +298,31 @@ public class ChartView extends JFrame implements ActionListener {
 		ChartVariables chart = new ChartVariables();
 		StatisticsVariables statistics = new StatisticsVariables();
 		
-		//생성할 파일경로 지정
+		// 통계파일(statistics)을 저장 할 학교명 디렉토리 생성 여부 확인
 		String schoolPath = ChartView.class.getResource("").getPath() + school.getText();
-		
-        //파일 객체 생성
-        File file = new File(schoolPath);
-        //!표를 붙여주어 파일이 존재하지 않는 경우의 조건을 걸어줌
-        if(!file.exists()){
-            //디렉토리 생성 메서드
-            file.mkdirs();
-            System.out.println("created directory successfully!");
+        File schoolDir = new File(schoolPath);
+        if(!schoolDir.exists()){
+        	schoolDir.mkdirs();
+            System.out.println("created school directory successfully!");
+        }
+        
+        // 학생정보(chart)를 저장 할 학교명/학년/반 디렉토리 생성 여부 확인
+        String studentInfoPath = schoolPath + File.separator + grade.getText() + File.separator + classNum.getText();
+        File studentInfoDir = new File(studentInfoPath);
+        if(!studentInfoDir.exists()){
+        	studentInfoDir.mkdirs();
+            System.out.println("created student directory successfully!");
         }
 
-		String chart_fileName = schoolPath + "/" + grade.getText() + "/" + classNum.getText();	// 'C://.../학교명/학년/반' 디렉토리
+		String chart_fileName = name.getText();
 		String statistics_fileName = "statistics";
 
-		File pathWithDir = new File(schoolPath, statistics_fileName);
-		if(pathWithDir.exists())
+		// 이전에 저장한 통계파일이 있다면 import
+		File statisticsPathWithDir = new File(schoolPath, statistics_fileName);
+		if(statisticsPathWithDir.exists())
 		{
 			try {
-				statistics = statistics.open(schoolPath + "/" + statistics_fileName,statistics);
+				statistics = statistics.open(schoolPath + File.separator + statistics_fileName,statistics);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -331,7 +336,7 @@ public class ChartView extends JFrame implements ActionListener {
 		
 		// 검진차트 저장
 		try{
-			String studentPath = chart_fileName + "/" + name.getText();
+			String studentPath = studentInfoPath + File.separator + chart_fileName;
 			fos = new FileOutputStream(studentPath);	// 'C://.../학교명/학년/반/학생이름' 파일
 			oos = new ObjectOutputStream(fos);
 			
@@ -398,6 +403,30 @@ public class ChartView extends JFrame implements ActionListener {
 
 		}catch(Exception e){
 				
+			JOptionPane.showMessageDialog(null, "차트 오픈이 실패했습니다.");
+				
+		}finally{
+				
+			if(fis != null) try{fis.close();}catch(IOException e){}
+			if(ois != null) try{ois.close();}catch(IOException e){}
+				
+		}
+	}
+	
+	public void open(String filePath) throws IOException, ClassNotFoundException {
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		
+		// 검진 차트 오픈
+		try{
+			fis = new FileInputStream(filePath);
+			ois = new ObjectInputStream(fis);
+	
+			ChartVariables chart = (ChartVariables)ois.readObject();
+			fillOnChartItems(chart);
+			
+		}catch(Exception e){
+
 			JOptionPane.showMessageDialog(null, "차트 오픈이 실패했습니다.");
 				
 		}finally{

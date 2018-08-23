@@ -1,4 +1,6 @@
 import java.awt.Container;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.StringTokenizer;
 
@@ -7,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
@@ -14,19 +17,22 @@ import javax.swing.tree.TreePath;
 
 public class FileExplorer extends JSplitPane implements TreeWillExpandListener {
 	private static FileExplorer instance;
+	private String path = FileExplorer.class.getResource("").getPath();
 	
-//	private JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	private JPanel leftTopPanel = new JPanel();
-//	leftPanel.setTopComponent(leftTopPanel);
-//	leftPanel.setBottomComponent(tree_jsp);
-	private DefaultMutableTreeNode root = new DefaultMutableTreeNode("My Å½»ö±â");
+	
+	private DefaultMutableTreeNode root = new DefaultMutableTreeNode(path);
+	private DefaultMutableTreeNode curNode = root;
 	private JTree tree = new JTree(root);
 	private JScrollPane tree_jsp = new JScrollPane(tree);
 	
 	private static void createFileExplorer() {
-		if(instance==null) {
+		if(instance == null) {
 			instance = new FileExplorer();
 		}
+	}
+	public JTree getTree() {
+		return this.tree;
 	}
 	
 	private FileExplorer() {
@@ -34,14 +40,34 @@ public class FileExplorer extends JSplitPane implements TreeWillExpandListener {
 		setTopComponent(leftTopPanel);
 		setBottomComponent(tree_jsp);
 		
-		File[] file = File.listRoots();
+		File dir = new File(path); 
+		File[] file = dir.listFiles(); 
+		
 		for (int i = 0; i < file.length; i++) {
+			String extension = getFileExtension(file[i].getName());
+			if(extension != "")
+				continue;
+			
 			DefaultMutableTreeNode dmt = new DefaultMutableTreeNode(file[i]);
 			dmt.add(new DefaultMutableTreeNode("EMPTY"));
-			root.add(dmt);
+			curNode.add(dmt);
 		}
 		
 		tree.addTreeWillExpandListener(this);
+
+	}
+	
+
+	
+	public String getFileExtension(String fileName) {
+		String extension = "";
+		
+		int i = fileName.lastIndexOf('.');
+		if(i>0) {
+			extension = fileName.substring(i+1);
+		}
+		
+		return extension;
 	}
 	
 	public static FileExplorer getInstance() {
@@ -51,7 +77,7 @@ public class FileExplorer extends JSplitPane implements TreeWillExpandListener {
 		
 		return instance;
 	}
-	
+
 	
 	@Override
 	public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
@@ -61,17 +87,19 @@ public class FileExplorer extends JSplitPane implements TreeWillExpandListener {
 
 	@Override
 	public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-		// TODO Auto-generated method stub
 		if (event.getSource() == tree) {
 			tree.setSelectionPath(event.getPath());
 			TreePath tp = tree.getSelectionPath();
-			// System.out.println("tp = "+tp);
+			
+			//System.out.println("tp = "+tp);
+			
 			StringTokenizer stk = new StringTokenizer(tp.toString(), "[,]");
-			stk.nextToken();
+			//stk.nextToken();
+			
 			if (stk.hasMoreTokens()) {
 				String filepath = stk.nextToken().trim();
 				while (stk.hasMoreTokens()) {
-					filepath += stk.nextToken().trim() + "/";
+					filepath += stk.nextToken().trim() + File.separator;
 				}
 				// System.out.println("file = "+filepath);
 				File dir = new File(filepath);
@@ -93,6 +121,10 @@ public class FileExplorer extends JSplitPane implements TreeWillExpandListener {
 							imsi.add(dtm);
 							count++;
 						} else {
+							String extension = getFileExtension(data[i].getName());
+							if(extension.equals("class"))
+								continue;
+							
 							DefaultMutableTreeNode dtm = new DefaultMutableTreeNode(data[i].getName());
 							imsi.add(dtm);
 							count++;

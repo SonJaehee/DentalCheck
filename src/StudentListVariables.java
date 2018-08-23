@@ -33,7 +33,8 @@ public class StudentListVariables extends JFrame {
 					// 파일이 있다면 파일 이름 출력
 					strName = file.getName();
 					int fileIdx = strName.lastIndexOf(".");	// 확장자 없애기
-					strName = strName.substring(0, fileIdx);
+					if(fileIdx > -1)
+						strName = strName.substring(0, fileIdx);
 					strFilePath = strGrade + "," + strClass + "," + strName;
 					
 					addToList(strGrade, strClass, strName);

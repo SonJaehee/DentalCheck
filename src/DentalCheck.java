@@ -3,6 +3,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
@@ -11,6 +13,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -22,7 +26,7 @@ import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-public class DentalCheck extends JFrame implements ActionListener {
+public class DentalCheck extends JFrame implements ActionListener, TreeSelectionListener {
 	private Container con;
 	private JSplitPane mainPanel = new JSplitPane();
 	private JSplitPane leftPanel = FileExplorer.getInstance();
@@ -48,6 +52,7 @@ public class DentalCheck extends JFrame implements ActionListener {
 	ChartView chartItems;
 	StatisticsView statisticItems;
 	StudentListView studentListItems;
+	JTree tree = FileExplorer.getInstance().getTree();
 	
 	public DentalCheck(String str) {
 		super(str);
@@ -120,16 +125,17 @@ public class DentalCheck extends JFrame implements ActionListener {
 	            }
 	        }
 	    });
-		
+		tree.addTreeSelectionListener(this);
 	}
 
+	
 	protected JComponent makeTextPanel() {
 		JPanel panel = new JPanel(false);
 		panel.setBackground(Color.WHITE);
 		panel.setLayout(new GridLayout(1, 1));
 		return panel;
 	}
-
+	
 	private void createMenubar() {
 		menuBar = new JMenuBar();
 		this.setJMenuBar(menuBar);
@@ -176,10 +182,9 @@ public class DentalCheck extends JFrame implements ActionListener {
 		DentalCheck checkUp = new DentalCheck("Dental Check Up");
 
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
 		if (e.getSource() == mntmNew) {
 			chartItems.reset();
 		} else if (e.getSource() == mntmOpen) {
@@ -224,5 +229,47 @@ public class DentalCheck extends JFrame implements ActionListener {
 		} else if (e.getSource() == macros[4]) {
 			System.out.println(macroFrame.mString[4]);
 		}
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent arg0) {
+		TreePath tp = arg0.getNewLeadSelectionPath();
+        if (tp != null)
+        {
+        	StringTokenizer stk = new StringTokenizer(tp.toString(), "[,]");
+			//stk.nextToken();
+			
+			if (stk.hasMoreTokens()) {
+				String filePath = stk.nextToken().trim();
+				while (stk.hasMoreTokens()) {
+
+					String extension = "";
+					String curPathFileName = stk.nextToken().trim();
+					int i = curPathFileName.lastIndexOf('.');
+					if(i>0) {
+						extension = curPathFileName.substring(i+1);
+					}
+					
+					filePath += curPathFileName;
+					if(extension.equals(""))
+						filePath += File.separator;
+				}
+				System.out.println(filePath);
+				
+				File file = new File(filePath);
+				if(file.isFile())
+					try {
+						tabbedPane.setSelectedIndex(0);
+						chartItems.open(filePath);//.getAbsolutePath());
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "클래스 없음.");
+					} catch (IOException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "오픈 실패.");
+					}
+			}
+        }
+        //   System.out.println("Selected:  "+tp.getLastPathComponent());
 	}
 }
